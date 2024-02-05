@@ -1,9 +1,9 @@
 const conn = require('../config/db');
 const { v4: uuidv4 } = require('uuid');
 
-exports.allMhs = (req, res) => {
-    const _getMhs = "SELECT * FROM mahasiswa WHERE deleted_at IS NULL";
-    allDataMhs = conn.query(_getMhs, (err, results) => {
+exports.allKelas = (req, res) => {
+    const _getKelas = "SELECT * FROM kelas WHERE deleted_at IS NULL";
+    allDataKelas = conn.query(_getKelas, (err, results) => {
         if (err) {
             console.log(err);
             res.error(err.sqlMessage.res);
@@ -17,30 +17,29 @@ exports.allMhs = (req, res) => {
     });
 }
 
-exports.insertMhs = async (req, res) => {
+exports.insertKelas = async (req, res) => {
     try {
-        const { nama, jurusan } = req.body;
+        const { nama } = req.body;
 
-        if ( nama == null || jurusan == null ) {
+        if ( nama == null ) {
 
             res.status(500).send({
                 "success": false,
-                "message": 'Nama Tidak Boleh Kosong',
+                "message": 'Nama Kelas Tidak Boleh Kosong',
                 "data": null
             });
             
         }
 
-        const dataMhs = {
+        const dataKelas = {
             id: uuidv4(), 
-            nama: nama, 
-            jurusan: jurusan, 
+            nama: nama,
             created_at: new Date(),
             updated_at: new Date()
         }
 
-        const data = await conn.query(`INSERT INTO mahasiswa (id, nama, jurusan, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-        [uuidv4(), nama, jurusan, new Date(), new Date()]);
+        const data = await conn.query(`INSERT INTO kelas (id, nama, created_at, updated_at) VALUES (?, ?, ?, ?)`,
+        [uuidv4(), nama, new Date(), new Date()]);
 
         if (!data) {
             res.status(404).send({
@@ -52,8 +51,8 @@ exports.insertMhs = async (req, res) => {
 
         res.status(201).send({
             "success": true,
-            "message": 'Data Berhasil Di Inputkan',
-            "data": dataMhs
+            "message": 'Data Kelas Berhasil Di Inputkan',
+            "data": dataKelas
         });
 
     } catch (error) {
@@ -66,11 +65,11 @@ exports.insertMhs = async (req, res) => {
     }
 }
 
-exports.updateMhs = async (req, res) => {
+exports.updateKelas = async (req, res) => {
     try {
-        const { id, nama_upd, jurusan_upd } = req.body;
+        const { id, nama_upd } = req.body;
 
-        if ( id == null && nama_upd == null && jurusan_upd == null) {
+        if ( id == null && nama_upd == null) {
 
             res.status(500).send({
                 "success": false,
@@ -80,16 +79,15 @@ exports.updateMhs = async (req, res) => {
             
         }
 
-        const dataMhs = {
+        const dataKelas = {
             id: id,
-            nama: nama_upd, 
-            jurusan: jurusan_upd, 
+            nama_upd: nama_upd, 
             updated_at: new Date()
         }
 
         // Update data in MySQL asynchronously
-        const data = await conn.query(`UPDATE mahasiswa SET nama = ?, jurusan = ?, updated_at = ? WHERE id = ?`,
-        [nama_upd, jurusan_upd, new Date(), id]);
+        const data = await conn.query(`UPDATE kelas SET nama = ?, updated_at = ? WHERE id = ?`,
+        [nama_upd, new Date(), id]);
 
         if (!data) {
             res.status(404).send({
@@ -101,8 +99,8 @@ exports.updateMhs = async (req, res) => {
 
         res.status(201).send({
             "success": true,
-            "message": 'Data Berhasil Update Data!',
-            "data": dataMhs
+            "message": 'Data Kelas Berhasil Update Data!',
+            "data": dataKelas
         });
 
     } catch (error) {
@@ -115,7 +113,7 @@ exports.updateMhs = async (req, res) => {
     }
 }
 
-exports.deletetMhs = async (req, res) => {
+exports.deletetKelas = async (req, res) => {
     try {
         const { id } = req.body;
 
@@ -130,7 +128,7 @@ exports.deletetMhs = async (req, res) => {
         }
 
         // Update data in MySQL asynchronously
-        const data = await conn.query(`UPDATE mahasiswa SET deleted_at = ? WHERE id = ?`,
+        const data = await conn.query(`UPDATE kelas SET deleted_at = ? WHERE id = ?`,
         [new Date(), id]);
 
         if (!data) {
@@ -144,7 +142,9 @@ exports.deletetMhs = async (req, res) => {
         res.status(201).send({
             "success": true,
             "message": 'Data Berhasil Di Hapus!',
-            "data": null
+            "data": {
+                id
+            }
         });
 
     } catch (error) {
