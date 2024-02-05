@@ -40,7 +40,7 @@ exports.insertMhs = async (req, res) => {
         }
 
         const data = await conn.query(`INSERT INTO mahasiswa (id, nama, jurusan, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
-        [uuidv4(), nama, jurusan, new Date(), new Date()]);
+        [dataMhs.id, dataMhs.nama, dataMhs.jurusan, dataMhs.created_at, dataMhs.updated_at]);
 
         if (!data) {
             res.status(404).send({

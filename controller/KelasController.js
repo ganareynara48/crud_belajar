@@ -39,7 +39,7 @@ exports.insertKelas = async (req, res) => {
         }
 
         const data = await conn.query(`INSERT INTO kelas (id, nama, created_at, updated_at) VALUES (?, ?, ?, ?)`,
-        [uuidv4(), nama, new Date(), new Date()]);
+        [dataKelas.id, dataKelas.nama, dataKelas.created_at, dataKelas.updated_at]);
 
         if (!data) {
             res.status(404).send({
@@ -87,7 +87,7 @@ exports.updateKelas = async (req, res) => {
 
         // Update data in MySQL asynchronously
         const data = await conn.query(`UPDATE kelas SET nama = ?, updated_at = ? WHERE id = ?`,
-        [nama_upd, new Date(), id]);
+        [dataKelas.nama_upd, dataKelas.updated_at, dataKelas.id]);
 
         if (!data) {
             res.status(404).send({
